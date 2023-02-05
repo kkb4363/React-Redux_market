@@ -1,33 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import {useSelector, useDispatch} from 'react-redux'
 
-
-const api = [
-  {
-    id: 1,
-    name: '영귤섬 아이스티',
-    packingState: '포장불가',
-    price: 13000,
-    amount: 1,
-    isChecked: false,
-  },
-  {
-    id: 2,
-    name: '러블리 티 박스',
-    packingState: '포장가능',
-    price: 20000,
-    amount: 1,
-    isChecked: false,
-  },
-  {
-    id: 3,
-    name: '그린티 랑드샤 세트',
-    packingState: '포장불가',
-    price: 36000,
-    amount: 1,
-    isChecked: false,
-  },
-];
 
 const 전체선택 = styled.div`
 display:flex;
@@ -89,6 +63,8 @@ justify-content:center;
 
 function App() {
   const [checkItems, setCheckItems] = useState([]);
+  const Dispatch = useDispatch();
+  const items = useSelector(state => state);
 
   const 단일선택 = (checked, id) => {
     if(checked){
@@ -102,7 +78,7 @@ function App() {
   const 전체선택함수 = (checked) => {
     if(checked){
       const Arr = [];
-      api.map(el => Arr.push(el.id));
+      items.items.map(el => Arr.push(el.id));
       setCheckItems(Arr);
     }
     else{
@@ -110,7 +86,8 @@ function App() {
     }
   }
 
- 
+  console.log(Dispatch)
+
   return (
     <>
       <h2 style={{fontSize:'25px'}}>
@@ -123,7 +100,7 @@ function App() {
       style={{width:'20px',height:'20px',marginRight:'20px'}} 
       type='checkbox'
       onChange={(e) => 전체선택함수(e.target.checked)}
-      checked={checkItems.length === api.length ? true : false}
+      checked={checkItems.length === items.items.length ? true : false}
       />
       <h2>전체선택</h2>
       <button style={{width:'80px',height:'40px',fontWeight:'600',marginLeft:'380px'}}>
@@ -134,30 +111,30 @@ function App() {
       <hr style={{height:'2px', backgroundColor:'black'}}/>
       
       <div>
-      {api.map(item => {
-        return <div key={item.id}>
+      {items.items.map((a, i) => {
+        return <div key={i}>
         <ItemWrap>
         <체크박스>
         <input 
-        checked={checkItems.includes(item.id)? true: false} 
-        onChange={(e)=> 단일선택(e.target.checked,item.id)}
+        checked={checkItems.includes(a.id)? true: false} 
+        onChange={(e)=> 단일선택(e.target.checked,a.id)}
         type='checkbox' 
         style={{width:'20px',height:'20px'}} 
         />
         </체크박스>
         <이름>
-        {item.name}
+        {a.name}
         </이름>
         <수량>
-        <button>-</button>
-        {item.amount}
+        <button onClick={items.items.Dispatch(minusCount())}>-</button>
+        {a.amount}
         <button>+</button>
         </수량>
         <가격>
         <input 
         type='number' 
         style={{width:'100px',border:'0px',fontSize:'18px'}} 
-        placeholder={item.price+'원'}>
+        placeholder={a.price+'원'}>
         </input>
         </가격>
         <button>
