@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {useSelector, useDispatch} from 'react-redux'
+import { addCount, minusCount } from './components/store';
 
 
 const 전체선택 = styled.div`
@@ -10,12 +11,14 @@ align-items:center;
 `
 const 주문 = styled.div`
 display:flex;
-justify-content:center;
+justify-content:flex-start;
 align-items:center;
+background-color:tomato;
 width:100%;
 height:50px;
-button{
-  width:
+span{
+  margin-right:310px;
+  font-size:20px;
 }
 `
 const ItemWrap = styled.div`
@@ -62,56 +65,49 @@ justify-content:center;
 `
 
 function App() {
-  const [checkItems, setCheckItems] = useState([]);
-  const Dispatch = useDispatch();
-  const items = useSelector(state => state);
-
+  const [checkItems, setCheckItems] = useState([]),items = useSelector(state => state.items);
+  const dispatch = useDispatch();
   const 단일선택 = (checked, id) => {
     if(checked){
       setCheckItems(prev => [...prev,id]);
     }
-    else{
-      setCheckItems(checkItems.filter(el => el!==id));
-    }
+    else setCheckItems(checkItems.filter(el => el!==id));
   }
 
   const 전체선택함수 = (checked) => {
     if(checked){
       const Arr = [];
-      items.items.map(el => Arr.push(el.id));
+      items.map(el => Arr.push(el.id));
       setCheckItems(Arr);
     }
-    else{
-      setCheckItems([]);
-    }
+    else setCheckItems([]);
   }
 
-  console.log(Dispatch)
+  const Price = items.map(a => {
+    return checkItems.includes(a.id)? 
+    Object.values(a)[2] * a.amount:
+    null
+  })
+  const TotalPrice = Price.reduce((a,b) => a+b)
 
   return (
     <>
-      <h2 style={{fontSize:'25px'}}>
-        장바구니
-      </h2>
-      <hr/>
-
+      <h2 style={{fontSize:'25px'}}>장바구니</h2><hr/>
       <전체선택>
       <input 
       style={{width:'20px',height:'20px',marginRight:'20px'}} 
       type='checkbox'
       onChange={(e) => 전체선택함수(e.target.checked)}
-      checked={checkItems.length === items.items.length ? true : false}
-      />
-      <h2>전체선택</h2>
-      <button style={{width:'80px',height:'40px',fontWeight:'600',marginLeft:'380px'}}>
-        선택 삭제
-      </button>
+      checked={checkItems.length === items.length ? true : false}/>
+        <h2>전체선택</h2>
+        <button style={{width:'80px',height:'40px',fontWeight:'600',marginLeft:'380px'}}>
+          선택 삭제
+        </button>
       </전체선택>
-      
       <hr style={{height:'2px', backgroundColor:'black'}}/>
       
       <div>
-      {items.items.map((a, i) => {
+      {items.map((a, i) => {
         return <div key={i}>
         <ItemWrap>
         <체크박스>
@@ -119,23 +115,20 @@ function App() {
         checked={checkItems.includes(a.id)? true: false} 
         onChange={(e)=> 단일선택(e.target.checked,a.id)}
         type='checkbox' 
-        style={{width:'20px',height:'20px'}} 
-        />
+        style={{width:'20px',height:'20px'}}/>
         </체크박스>
         <이름>
         {a.name}
         </이름>
         <수량>
-        <button onClick={items.items.Dispatch(minusCount())}>-</button>
+        <button onClick={()=> dispatch(minusCount(a.id))}>-</button>
         {a.amount}
-        <button>+</button>
+        <button onClick={()=> dispatch(addCount(a.id))}>+</button>
         </수량>
         <가격>
-        <input 
-        type='number' 
-        style={{width:'100px',border:'0px',fontSize:'18px'}} 
-        placeholder={a.price+'원'}>
-        </input>
+        <span style={{width:'100px',border:'0px',fontSize:'18px'}}>
+        {a.price*a.amount+'원'}
+        </span>
         </가격>
         <button>
           바로구매
@@ -147,6 +140,7 @@ function App() {
       </div>
       
       <주문>
+      <span>총 가격 : {TotalPrice} 원</span>
       <button>선택상품 주문</button>
       <button>전체상품 주문</button>
       </주문>
