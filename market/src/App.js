@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import {useSelector, useDispatch} from 'react-redux'
-import { addCount, minusCount } from './components/store';
-
+import { addCount, minusCount,deleteItem } from './components/store';
+import { BsXLg } from "react-icons/bs";
 
 const 전체선택 = styled.div`
 display:flex;
@@ -13,7 +13,6 @@ const 주문 = styled.div`
 display:flex;
 justify-content:flex-start;
 align-items:center;
-background-color:tomato;
 width:100%;
 height:50px;
 span{
@@ -100,9 +99,6 @@ function App() {
       onChange={(e) => 전체선택함수(e.target.checked)}
       checked={checkItems.length === items.length ? true : false}/>
         <h2>전체선택</h2>
-        <button style={{width:'80px',height:'40px',fontWeight:'600',marginLeft:'380px'}}>
-          선택 삭제
-        </button>
       </전체선택>
       <hr style={{height:'2px', backgroundColor:'black'}}/>
       
@@ -133,6 +129,11 @@ function App() {
         <button>
           바로구매
         </button>
+        <div
+        style={{marginLeft:'20px'}}
+        onClick={(e) => dispatch(deleteItem(e.target.parentElement.parentElement.parentElement))}>
+          <BsXLg />
+        </div>
         </ItemWrap>
         <hr/>
         </div>

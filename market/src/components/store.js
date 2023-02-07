@@ -26,11 +26,14 @@ const items = createSlice({
         minusCount(state,action){
             let num = state.findIndex(a => a.id === action.payload);
             if(state[num].amount >1) state[num].amount--;
+        },
+        deleteItem(state,action){
+            action.payload.remove();
         }
     }
 })
 
-export const {addCount,minusCount} = items.actions
+export const {addCount,minusCount,deleteItem} = items.actions
 
 export default configureStore({
     reducer:{
